@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<robot name="tendon_quadruped">
+  <link name="base">
+    <inertial>
+      <origin xyz="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry><box size="0.4 0.2 0.1"/></geometry>
+      <material name="gray"><color rgba="0.6 0.6 0.6 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry><box size="0.4 0.2 0.1"/></geometry>
+    </collision>
+  </link>
+
+  <!-- Four identical legs: front-left (fl), front-right (fr), rear-left (rl), rear-right (rr) -->
+  <!-- Hip joints are along the Y axis, knees along the Y axis for a sagittal swing. -->
+  <xacro:macro name="leg" params="prefix x y">
+    <link name="${prefix}_thigh">
+      <inertial>
+        <origin xyz="0 0 -0.15"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 -0.15"/>
+        <geometry><box size="0.05 0.05 0.3"/></geometry>
+        <material name="blue"><color rgba="0.1 0.3 0.7 1"/></material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 -0.15"/>
+        <geometry><box size="0.05 0.05 0.3"/></geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_hip" type="revolute">
+      <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
+      <parent link="base"/>
+      <child link="${prefix}_thigh"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="100" lower="-1.57" upper="1.57" velocity="5"/>
+    </joint>
+
+    <link name="${prefix}_shin">
+      <inertial>
+        <origin xyz="0 0 -0.15"/>
+        <mass value="0.4"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 -0.15"/>
+        <geometry><box size="0.04 0.04 0.3"/></geometry>
+        <material name="green"><color rgba="0.1 0.7 0.3 1"/></material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 -0.15"/>
+        <geometry><box size="0.04 0.04 0.3"/></geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_knee" type="revolute">
+      <origin xyz="0 0 -0.3" rpy="0 0 0"/>
+      <parent link="${prefix}_thigh"/>
+      <child link="${prefix}_shin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="80" lower="-1.57" upper="1.57" velocity="5"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Expand the legs manually (xacro tags are unused at runtime, but retained for clarity) -->
+  <link name="fl_thigh">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.5"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry><material name="blue"><color rgba="0.1 0.3 0.7 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry></collision>
+  </link>
+  <joint name="fl_hip" type="revolute">
+    <origin xyz="0.18 0.1 0"/><parent link="base"/><child link="fl_thigh"/><axis xyz="0 1 0"/><limit effort="100" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+  <link name="fl_shin">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.4"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry><material name="green"><color rgba="0.1 0.7 0.3 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry></collision>
+  </link>
+  <joint name="fl_knee" type="revolute">
+    <origin xyz="0 0 -0.3"/><parent link="fl_thigh"/><child link="fl_shin"/><axis xyz="0 1 0"/><limit effort="80" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+
+  <link name="fr_thigh">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.5"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry><material name="blue"><color rgba="0.1 0.3 0.7 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry></collision>
+  </link>
+  <joint name="fr_hip" type="revolute">
+    <origin xyz="0.18 -0.1 0"/><parent link="base"/><child link="fr_thigh"/><axis xyz="0 1 0"/><limit effort="100" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+  <link name="fr_shin">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.4"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry><material name="green"><color rgba="0.1 0.7 0.3 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry></collision>
+  </link>
+  <joint name="fr_knee" type="revolute">
+    <origin xyz="0 0 -0.3"/><parent link="fr_thigh"/><child link="fr_shin"/><axis xyz="0 1 0"/><limit effort="80" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+
+  <link name="rl_thigh">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.5"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry><material name="blue"><color rgba="0.1 0.3 0.7 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry></collision>
+  </link>
+  <joint name="rl_hip" type="revolute">
+    <origin xyz="-0.18 0.1 0"/><parent link="base"/><child link="rl_thigh"/><axis xyz="0 1 0"/><limit effort="100" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+  <link name="rl_shin">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.4"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry><material name="green"><color rgba="0.1 0.7 0.3 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry></collision>
+  </link>
+  <joint name="rl_knee" type="revolute">
+    <origin xyz="0 0 -0.3"/><parent link="rl_thigh"/><child link="rl_shin"/><axis xyz="0 1 0"/><limit effort="80" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+
+  <link name="rr_thigh">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.5"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0.01" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry><material name="blue"><color rgba="0.1 0.3 0.7 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.05 0.05 0.3"/></geometry></collision>
+  </link>
+  <joint name="rr_hip" type="revolute">
+    <origin xyz="-0.18 -0.1 0"/><parent link="base"/><child link="rr_thigh"/><axis xyz="0 1 0"/><limit effort="100" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+  <link name="rr_shin">
+    <inertial><origin xyz="0 0 -0.15"/><mass value="0.4"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.01"/></inertial>
+    <visual><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry><material name="green"><color rgba="0.1 0.7 0.3 1"/></material></visual>
+    <collision><origin xyz="0 0 -0.15"/><geometry><box size="0.04 0.04 0.3"/></geometry></collision>
+  </link>
+  <joint name="rr_knee" type="revolute">
+    <origin xyz="0 0 -0.3"/><parent link="rr_thigh"/><child link="rr_shin"/><axis xyz="0 1 0"/><limit effort="80" lower="-1.57" upper="1.57" velocity="5"/>
+  </joint>
+</robot>
